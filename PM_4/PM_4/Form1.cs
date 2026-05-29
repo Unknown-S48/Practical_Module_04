@@ -34,65 +34,68 @@ namespace PM_4
             string hoursWorked = txtBoxHoursWorked.Text;
             string numberOfDependents = txtBoxNumberOfDependents.Text;
             //Check if any of the input values are empty and display a message box if they are
+            // Validate contractor name
             if (string.IsNullOrWhiteSpace(contractorName))
             {
                 MessageBox.Show("Please enter the contractor's name.");
+                return;
             }
+            else if (!contractorName.All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
+            {
+                MessageBox.Show("Please enter a valid name (only letters and spaces are allowed).");
+                return;
+            }
+
+            // Validate hours worked
             if (string.IsNullOrWhiteSpace(hoursWorked))
             {
                 MessageBox.Show("Please enter the number of hours worked.");
+                return;
             }
             else if (!double.TryParse(hoursWorked, out double hours))
             {
                 MessageBox.Show("Please enter a valid number (letters and special characters are not allowed).");
+                return;
             }
             else if (hours < 0)
             {
                 MessageBox.Show("Please enter a positive number of hours worked.");
+                return;
             }
-            else if (string.IsNullOrWhiteSpace(numberOfDependents))
+
+            // Validate number of dependents
+            if (string.IsNullOrWhiteSpace(numberOfDependents))
             {
                 MessageBox.Show("Please enter the number of dependents.");
+                return;
             }
             else if (!int.TryParse(numberOfDependents, out int dependents))
             {
                 MessageBox.Show("Please enter a valid number (letters and special characters are not allowed).");
+                return;
             }
             else if (dependents < 0)
             {
                 MessageBox.Show("Please enter a positive number of dependents.");
+                return;
             }
-            else
-            {
-                //Calculating the hourly rateh
-                //Hourly Rate = R150.00
-                double hourlyRateDbl = 150.00;
-                //Calculating the gross pay
-                //Gross Pay = Hours Worked * Hourly Rate
-                double grossPayDbl = Convert.ToDouble(hoursWorked) * hourlyRateDbl;
-                //Calculating the PAYE deduction
-                //(Grosspay - (gross pay * 0.0575 * Number of Dependents)) * 25%
-                double payeDeductionDbl = (grossPayDbl - (grossPayDbl * 0.0575 * Convert.ToDouble(numberOfDependents))) * 0.25;
-                //Calculating the UIF deduction
-                //1% of the gross pay
-                double uifDeductionDbl = grossPayDbl * 0.01;
-                //Calculating the membership fee
-                //13% of gross pay
-                double membershipFeeDbl = grossPayDbl * 0.13;
-                //Calculating the total deductions
-                //Total Deductions = PAYE Deduction + UIF Deduction + Membership Fee
-                double totalDeductionsDbl = payeDeductionDbl + uifDeductionDbl + membershipFeeDbl;
-                //Calculating the net pay
-                //Net Pay = Gross Pay - Total Deductions
-                double netPayDbl = grossPayDbl - totalDeductionsDbl;
-                //Display the calculated values in the text boxes
-                txtBoxGrossPay.Text = grossPayDbl.ToString("C", new CultureInfo("en-ZA"));
-                txtBoxPayeDeduction.Text = payeDeductionDbl.ToString("C", new CultureInfo("en-ZA"));
-                txtBoxUifDecudtion.Text = uifDeductionDbl.ToString("C", new CultureInfo("en-ZA"));
-                txtBoxMembershipFee.Text = membershipFeeDbl.ToString("C", new CultureInfo("en-ZA"));
-                txtBoxTotalDeductions.Text = totalDeductionsDbl.ToString("C", new CultureInfo("en-ZA"));
-                txtBoxNetPay.Text = netPayDbl.ToString("C", new CultureInfo("en-ZA"));
-            }
+
+            // All validations passed - Calculate payroll
+            double hourlyRateDbl = 150.00;
+            double grossPayDbl = double.Parse(hoursWorked) * hourlyRateDbl;
+            double payeDeductionDbl = (grossPayDbl - (grossPayDbl * 0.0575 * Convert.ToDouble(numberOfDependents))) * 0.25;
+            double uifDeductionDbl = grossPayDbl * 0.01;
+            double membershipFeeDbl = grossPayDbl * 0.13;
+            double totalDeductionsDbl = payeDeductionDbl + uifDeductionDbl + membershipFeeDbl;
+            double netPayDbl = grossPayDbl - totalDeductionsDbl;
+
+            // Display the calculated values in the text boxes
+            txtBoxGrossPay.Text = grossPayDbl.ToString("C", new CultureInfo("en-ZA"));
+            txtBoxPayeDeduction.Text = payeDeductionDbl.ToString("C", new CultureInfo("en-ZA"));
+            txtBoxUifDecudtion.Text = uifDeductionDbl.ToString("C", new CultureInfo("en-ZA"));
+            txtBoxMembershipFee.Text = membershipFeeDbl.ToString("C", new CultureInfo("en-ZA"));
+            txtBoxTotalDeductions.Text = totalDeductionsDbl.ToString("C", new CultureInfo("en-ZA"));
+            txtBoxNetPay.Text = netPayDbl.ToString("C", new CultureInfo("en-ZA"));
         }
     }
 }
